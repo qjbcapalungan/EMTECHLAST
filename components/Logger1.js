@@ -85,7 +85,7 @@ const Logger1 = () => {
 
       {/* Data sent */}
       <View style={[styles.infoBox, styles.dataSentBox]}>
-        <Text style={styles.infoText}>Data Sent: 65%</Text>
+        <Text style={styles.infoText}>Data Sent: 100%</Text>
         <IconB name="transfer" size={30} color="#007AFF" />
       </View>
 

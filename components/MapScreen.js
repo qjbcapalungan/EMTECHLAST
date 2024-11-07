@@ -7,7 +7,7 @@ const MapScreen = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [dataLoggerLocations, setDataLoggerLocations] = useState([
     { id: '1', latitude: 14.688445, longitude: 120.957051, title: 'Data Logger 1', description: 'Status: Good' },
-    { id: '2', latitude: 14.714729, longitude: 120.973008, title: 'Data Logger 2', description: 'Status: Good' },
+    { id: '2', latitude: 14.714729, longitude: 120.973008, title: 'Data Logger 2', description: 'Status: Warning' },
     { id: '3', latitude: 14.706994, longitude: 120.960775, title: 'Data Logger 3', description: 'Status: Needs Maintenance' },
     // Add more data logger locations here
   ]);

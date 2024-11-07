@@ -38,7 +38,7 @@ const Logger2 = () => {
   return (
     <View style={styles.container}>
       <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>STATUS: WORKING</Text>
+        <Text style={styles.statusText}>STATUS: WARNING</Text>
       </View>
 
       <View style={styles.chartAndProgressContainer}>
@@ -73,7 +73,7 @@ const Logger2 = () => {
         {/* Battery Percentage */}
         <View style={styles.infoBox}>
           <Icon name="battery-half" size={30} color="#007AFF" />
-          <Text style={styles.infoText}>Battery: 65%</Text>
+          <Text style={styles.infoText}>Battery: 58%</Text>
         </View>
 
         {/* Flowrate Handler */}
@@ -85,7 +85,7 @@ const Logger2 = () => {
 
       {/* Data sent */}
       <View style={[styles.infoBox, styles.dataSentBox]}>
-        <Text style={styles.infoText}>Data Sent: 65%</Text>
+        <Text style={styles.infoText}>Data Sent: 67%</Text>
         <IconB name="transfer" size={30} color="#007AFF" />
       </View>
 
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   statusContainer: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FFA500',
     borderRadius: 8,
     padding: 20,
     alignItems: 'center',

@@ -1,4 +1,4 @@
-//HomeScreen.js
+// HomeScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, StatusBar, Image } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -18,7 +18,7 @@ export default function HomeScreen({ navigation }) {
         <Pressable style={styles.card} onPress={() => handlePress('Logger1')}>
           <View style={styles.barContainer}>
             <View style={[styles.bar, { backgroundColor: '#4CAF50', width: '100%' }]}>
-              <Text style={styles.barText}>GP 98%</Text>
+              <Text style={styles.barText}>GP 100%</Text>
             </View>
           </View>
           <AnimatedCircularProgress
@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    justifyContent: 'center', // Change this to 'flex-start' for top positioning
+    justifyContent: 'center',
     padding: 20,
-    marginBottom: -100, // Create space below the image
+    marginBottom: -50,
   },
   image: {
-    width: 300, // Adjust the width as necessary
-    height: 300, // Adjust the height as necessary
+    width: 300,
+    height: 300,
   },
 });
