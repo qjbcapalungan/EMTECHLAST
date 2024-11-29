@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location'; // Make sure this import is correct
+import * as Location from 'expo-location'; // Make sure this import is correct06
 
 const MapScreen = () => {
   const [userLocation, setUserLocation] = useState(null);

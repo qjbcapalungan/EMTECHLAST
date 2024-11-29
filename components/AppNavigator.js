@@ -44,6 +44,9 @@ const AppNavigator = () => (
         headerTintColor: 'black',
       }}
     />
+
+
+    
   </Stack.Navigator>
 );
 
