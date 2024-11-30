@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, StatusBar, TextInput, FlatList, Modal, TouchableOpacity } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { MaterialIcons } from '@expo/vector-icons';
+import { faker } from '@faker-js/faker';
 import HeaderTab from '../components/HeaderTab'; // Adjust path as necessary
 
 export default function HomeScreen({ navigation }) {
@@ -24,15 +25,15 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  // Array of logger data
+  // Generate fake data for loggers with only progress being random
   const loggers = [
-    { id: 'Logger1', label: 'Pressure Monitoring Pump', progress: 100 },
-    { id: 'Logger2', label: 'Pressure Regulation Valve', progress: 67 },
-    { id: 'Logger3', label: 'District Meter', progress: 33 },
-    { id: 'Logger4', label: 'Pressure Monitoring Pump', progress: 85 },
-    { id: 'Logger5', label: 'Pressure Regulation Valve', progress: 50 },
-    { id: 'Logger6', label: 'District Meter', progress: 15 },
-    { id: 'Logger7', label: 'Pressure Monitoring Pump', progress: 40 },
+    { id: 'Logger1', label: 'Pressure Monitoring Pump', progress: faker.number.int({ min: 1, max: 100 }) },
+    { id: 'Logger2', label: 'Pressure Regulation Valve', progress: faker.number.int({ min: 1, max: 100 }) },
+    { id: 'Logger3', label: 'District Meter', progress: faker.number.int({ min: 1, max: 100 }) },
+    { id: 'Logger4', label: 'Pressure Monitoring Pump', progress: faker.number.int({ min: 1, max: 100 }) },
+    { id: 'Logger5', label: 'Pressure Regulation Valve', progress: faker.number.int({ min: 1, max: 100 }) },
+    { id: 'Logger6', label: 'District Meter', progress: faker.number.int({ min: 1, max: 100 }) },
+    { id: 'Logger7', label: 'Pressure Monitoring Pump', progress: faker.number.int({ min: 1, max: 100 }) },
   ];
 
   // Filtered data based on the selected filters and search text
@@ -64,9 +65,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.dataSent}>Data Sent: {item.progress}%</Text>
 
             {/* Condition of datalogger */}
-            <Text style={[styles.conditionText, { color }]}>
-              Condition: {item.progress >= 70 ? 'Good' : item.progress >= 35 ? 'Warning' : 'Critical'}
-            </Text>
+            <Text style={[styles.conditionText, { color }]}>Condition: {item.progress >= 70 ? 'Good' : item.progress >= 35 ? 'Warning' : 'Critical'}</Text>
           </View>
 
           {/* Circular Progress Indicator Section */}
@@ -132,36 +131,22 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.modalContent}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Select Logger Types</Text>
-                <TouchableOpacity
-                  style={styles.doneButton}
-                  onPress={() => setFilterVisible(false)}
-                >
+                <TouchableOpacity style={styles.doneButton} onPress={() => setFilterVisible(false)}>
                   <Text style={styles.doneButtonText}>Done</Text>
                 </TouchableOpacity>
               </View>
 
               {/* Filter Options with Checkboxes */}
-              {['Pressure Monitoring Pump', 'Pressure Regulation Valve', 'District Meter'].map((option) => (
-                <TouchableOpacity
-                  key={option}
-                  style={styles.filterOption}
-                  onPress={() => handleFilterSelection(option)}
-                >
-                  <View style={styles.checkbox}>
-                    {selectedFilters.includes(option) && <View style={styles.checkedBox} />}
-                  </View>
+              {["Pressure Monitoring Pump", "Pressure Regulation Valve", "District Meter"].map((option) => (
+                <TouchableOpacity key={option} style={styles.filterOption} onPress={() => handleFilterSelection(option)}>
+                  <View style={styles.checkbox}>{selectedFilters.includes(option) && <View style={styles.checkedBox} />}</View>
                   <Text style={styles.filterOptionText}>{option}</Text>
                 </TouchableOpacity>
               ))}
 
               {/* Reset Filter */}
-              <TouchableOpacity
-                style={styles.filterOption}
-                onPress={() => setSelectedFilters([])}
-              >
-                <View style={styles.checkbox}>
-                  {selectedFilters.length === 0 && <View style={styles.checkedBox} />}
-                </View>
+              <TouchableOpacity style={styles.filterOption} onPress={() => setSelectedFilters([])}>
+                <View style={styles.checkbox}>{selectedFilters.length === 0 && <View style={styles.checkedBox} />}</View>
                 <Text style={styles.filterOptionText}>Show All</Text>
               </TouchableOpacity>
             </View>
@@ -178,7 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#04364A',
   },
   customHeader: {
-    backgroundColor: '#04364A', 
+    backgroundColor: '#04364A',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 0,
@@ -238,7 +223,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FBFBFB',
     padding: 20,
-    marginVertical: 10,
+    marginVertical: 2,
     borderRadius: 8,
   },
   cardContent: {
