@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "163076269838",
+    "project_id": "emtech-mobile-application",
+    "storage_bucket": "emtech-mobile-application.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163076269838:android:88672d912c6078a6ae595f",
+        "android_client_info": {
+          "package_name": "com.example.midtermsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAej5HdoJNtbzjy172Hn1fXx9XAaGpHcgk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
