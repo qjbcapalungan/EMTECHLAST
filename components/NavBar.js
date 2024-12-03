@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     color: '#000000', // Set active tint color to black
   },
   tabBarStyle: {
-    height: 60, // Increased the height to make it a little bit larger
+    height: 70, // Increased the height to make it a little bit larger
     backgroundColor: '#176B87', // Set background color
   },
   tabBarIcon: {

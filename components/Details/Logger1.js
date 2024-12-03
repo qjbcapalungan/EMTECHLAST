@@ -82,7 +82,7 @@ const Logger1 = () => {
       <View style={styles.chartAndProgressContainer}>
         {/* Circular Progress Bar Section */}
         <View style={styles.circularProgressContainer}>
-          <CircularProgressBar value={latestPsi} maxValue={17} unit="psi" />
+          <CircularProgressBar value={latestPsi} maxValue={15} unit="psi" />
         </View>
         {/* Data Sent in a Box */}
         <View style={styles.dataSentContainer}>

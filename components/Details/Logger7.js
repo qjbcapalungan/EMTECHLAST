@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import { LineChart, BarChart } from 'react-native-chart-kit'; // Import BarChart
+import { LineChart } from 'react-native-chart-kit';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconB from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,6 +8,11 @@ import { useNavigation } from '@react-navigation/native';
 import { faker } from '@faker-js/faker';
 
 faker.seed(123); // Set seed for reproducibility
+
+// Generate static fake data outside of the component
+const initialDataPoints = Array.from({ length: 16 }, () => faker.number.int({ min: 3, max: 15 }));
+const staticFlowrate = faker.number.int({ min: 100, max: 150 });
+const staticDataSent = faker.number.int({ min: 80, max: 100 });
 
 const CircularProgressBar = ({ value, maxValue, unit }) => {
   const progress = value / maxValue;
@@ -34,7 +39,7 @@ const Logger7 = () => {
   const navigation = useNavigation();
 
   // State to store data points
-  const [dataPoints, setDataPoints] = useState(Array.from({ length: 16 }, () => faker.number.int({ min: 3, max: 15 })));
+  const [dataPoints, setDataPoints] = useState(initialDataPoints);
 
   useEffect(() => {
     // Function to generate a new data point and update the array
@@ -53,23 +58,26 @@ const Logger7 = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // The current psi value is the latest value in the dataPoints array
+  const currentPsiValue = dataPoints[dataPoints.length - 1];
+
   return (
     <View style={styles.container}>
       <View style={styles.headerAndStatusContainer}>
         <Text style={styles.headerText}>Pressure Monitoring Pump 2 Report</Text>
-        <Text style={[styles.statusText, dataPoints[0] < 7 ? styles.warningText : null]}>
-          {dataPoints[0] < 7 ? 'STATUS: WARNING' : 'STATUS: WORKING'}
+        <Text style={[styles.statusText, currentPsiValue < 7 ? styles.warningText : null]}>
+          {currentPsiValue < 7 ? 'STATUS: WARNING' : 'STATUS: WORKING'}
         </Text>
       </View>
 
       <View style={styles.chartAndProgressContainer}>
         {/* Circular Progress Bar Section */}
         <View style={styles.circularProgressContainer}>
-          <CircularProgressBar value={dataPoints[0]} maxValue={15} unit="psi" />
+          <CircularProgressBar value={currentPsiValue} maxValue={15} unit="psi" />
         </View>
         {/* Data Sent in a Box */}
         <View style={styles.dataSentContainer}>
-          <Text style={styles.dataSentText}>Data Sent: {faker.number.int({ min: 80, max: 100 })}%</Text>
+          <Text style={styles.dataSentText}>Data Sent: {staticDataSent}%</Text>
           <IconB name="transfer" size={30} color="#007AFF" />
         </View>
       </View>
@@ -77,7 +85,7 @@ const Logger7 = () => {
       <View style={styles.infoContainer}>
         {/* Flowrate Handler */}
         <View style={[styles.infoBox, styles.dataSentBox]}>
-          <Text style={styles.infoText}>Flowrate: {faker.number.int({ min: 100, max: 150 })} L/min</Text>
+          <Text style={styles.infoText}>Flowrate: {staticFlowrate} L/min</Text>
           <Icon name="tint" size={30} color="#007AFF" />
         </View>
       </View>
@@ -128,7 +136,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     backgroundColor: 'transparent',
   },
-  
   statusText: {
     color: '#000',
     fontWeight: 'bold',
@@ -143,7 +150,6 @@ const styles = StyleSheet.create({
     borderColor: '#04364A',
     width: 350,
     height: 75,
-    
   },
   warningText: {
     backgroundColor: '#FF0000',
@@ -169,7 +175,6 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginRight: 10,
-    
   },
   chartContainer: {
     flex: 1,
@@ -244,7 +249,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25, // Increase padding horizontally
     justifyContent: 'space-between', // Align content to the edges
     width: '100%', // Make it full width
-    marginTop: 5
+    marginTop: 5,
   },
   warningBackground: {
     backgroundColor: '#FF0000',

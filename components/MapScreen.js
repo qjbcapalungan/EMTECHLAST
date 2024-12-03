@@ -9,6 +9,11 @@ const MapScreen = () => {
     { id: '1', latitude: 14.688445, longitude: 120.957051, title: 'Data Logger 1', description: 'Status: Good' },
     { id: '2', latitude: 14.714729, longitude: 120.973008, title: 'Data Logger 2', description: 'Status: Warning' },
     { id: '3', latitude: 14.706994, longitude: 120.960775, title: 'Data Logger 3', description: 'Status: Needs Maintenance' },
+    { id: '4', latitude: 14.681383812342407, longitude: 120.9719438630989, title: 'Data Logger 4', description: 'Status: Needs Maintenance' },
+    { id: '5', latitude: 14.704487111943205, longitude: 120.99976485000862, title: 'Data Logger 5', description: 'Status: Needs Maintenance' },
+    { id: '6', latitude: 14.662909807628932, longitude: 120.95734998774374, title: 'Data Logger 6', description: 'Status: Needs Maintenance' },
+    { id: '7', latitude: 14.734475419778178, longitude: 120.98981331117588, title: 'Data Logger 7', description: 'Status: Needs Maintenance' },
+
     // Add more data logger locations here
   ]);
 
