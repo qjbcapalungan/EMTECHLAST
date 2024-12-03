@@ -37,13 +37,17 @@ const Logger7 = () => {
   const [dataPoints, setDataPoints] = useState(Array.from({ length: 16 }, () => faker.number.int({ min: 3, max: 15 })));
 
   useEffect(() => {
-    // Function to generate new data points
-    const generateDataPoints = () => {
-      setDataPoints(Array.from({ length: 16 }, () => faker.number.int({ min: 3, max: 15 })));
+    // Function to generate a new data point and update the array
+    const addDataPoint = () => {
+      setDataPoints((prevDataPoints) => {
+        const newDataPoint = faker.number.int({ min: 3, max: 15 });
+        const updatedDataPoints = [...prevDataPoints.slice(1), newDataPoint];
+        return updatedDataPoints;
+      });
     };
 
     // Set interval to update data points every 5 seconds
-    const interval = setInterval(generateDataPoints, 5000);
+    const interval = setInterval(addDataPoint, 3000);
 
     // Clear interval on component unmount
     return () => clearInterval(interval);

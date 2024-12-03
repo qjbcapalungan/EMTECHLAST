@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import { LineChart, BarChart } from 'react-native-chart-kit'; // Import BarChart
+import { LineChart } from 'react-native-chart-kit';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconB from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
-import { faker } from '@faker-js/faker';
-
-faker.seed(123); // Set seed for reproducibility
+import firebase from './firebaseConfig'; // Corrected import path
 
 const CircularProgressBar = ({ value, maxValue, unit }) => {
   const progress = value / maxValue;
@@ -33,39 +31,62 @@ const Logger1 = () => {
   const screenWidth = Dimensions.get('window').width;
   const navigation = useNavigation();
 
-  // State to store data points
-  const [dataPoints, setDataPoints] = useState(Array.from({ length: 16 }, () => faker.number.int({ min: 3, max: 15 })));
+  // State to store psi data points - always starts from 0
+  const [dataPoints, setDataPoints] = useState([0]);
+  const [latestPsi, setLatestPsi] = useState(0);
 
   useEffect(() => {
-    // Function to generate new data points
-    const generateDataPoints = () => {
-      setDataPoints(Array.from({ length: 16 }, () => faker.number.int({ min: 3, max: 15 })));
-    };
+    // Reference to the Firebase Realtime Database location for psi value
+    const reference = firebase.database().ref('/psi');
 
-    // Set interval to update data points every 5 seconds
-    const interval = setInterval(generateDataPoints, 5000);
+    try {
+      // Fetch data initially and listen for real-time updates
+      reference.on('value', (snapshot) => {
+        console.log('Snapshot data:', snapshot.val()); // Debugging line
+        const data = snapshot.val();
+        if (data !== null) {
+          const psiValues = Object.values(data);
+          let index = 0;
+          const interval = setInterval(() => {
+            if (index < psiValues.length) {
+              setDataPoints((prevDataPoints) => [...prevDataPoints, psiValues[index]]);
+              setLatestPsi(psiValues[index]);
+              index++;
+            } else {
+              clearInterval(interval);
+            }
+          }, 1000);
+        } else {
+          // If there is no data, just keep it as [0]
+          setDataPoints([0]);
+          setLatestPsi(0);
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching data from Firebase:', error);
+    }
 
-    // Clear interval on component unmount
-    return () => clearInterval(interval);
+    // Cleanup function to detach listener when the component unmounts
+    return () => reference.off('value');
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.headerAndStatusContainer}>
         <Text style={styles.headerText}>Pressure Monitoring Pump 1 Report</Text>
-        <Text style={[styles.statusText, dataPoints[0] < 7 ? styles.warningText : null]}>
-          {dataPoints[0] < 7 ? 'STATUS: WARNING' : 'STATUS: WORKING'}
+        <Text style={[styles.statusText, latestPsi < 7 ? styles.warningText : null]}>
+          {latestPsi < 7 ? 'STATUS: WARNING' : 'STATUS: WORKING'}
         </Text>
       </View>
 
       <View style={styles.chartAndProgressContainer}>
         {/* Circular Progress Bar Section */}
         <View style={styles.circularProgressContainer}>
-          <CircularProgressBar value={dataPoints[0]} maxValue={15} unit="psi" />
+          <CircularProgressBar value={latestPsi} maxValue={17} unit="psi" />
         </View>
         {/* Data Sent in a Box */}
         <View style={styles.dataSentContainer}>
-          <Text style={styles.dataSentText}>Data Sent: {faker.number.int({ min: 80, max: 100 })}%</Text>
+          <Text style={styles.dataSentText}>Data Sent: {Math.floor((dataPoints.length / 16) * 100)}%</Text>
           <IconB name="transfer" size={30} color="#007AFF" />
         </View>
       </View>
@@ -73,7 +94,7 @@ const Logger1 = () => {
       <View style={styles.infoContainer}>
         {/* Flowrate Handler */}
         <View style={[styles.infoBox, styles.dataSentBox]}>
-          <Text style={styles.infoText}>Flowrate: {faker.number.int({ min: 100, max: 150 })} L/min</Text>
+          <Text style={styles.infoText}>Flowrate: 120 L/min</Text>
           <Icon name="tint" size={30} color="#007AFF" />
         </View>
       </View>
@@ -82,20 +103,36 @@ const Logger1 = () => {
       <View style={styles.chartContainer}>
         <LineChart
           data={{
-            labels: [], // Empty labels array to remove x-axis labels
+            labels: dataPoints.map((_, index) => index % 5 === 0 ? `T${index}` : ''), // Adding periodic labels for clarity
             datasets: [{ data: dataPoints }],
           }}
           width={screenWidth - 20} // Made the chart larger
-          height={250} // Increased height
+          height={300} // Increased height
           chartConfig={{
             backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: () => '#ff735e',
-            labelColor: () => '#000',
+            backgroundGradientFrom: '#f8f8f8',
+            backgroundGradientTo: '#f8f8f8',
+            color: (opacity = 1) => `rgba(255, 115, 94, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: { borderRadius: 16 },
+            propsForDots: {
+              r: '4',
+              strokeWidth: '2',
+              stroke: '#ff735e',
+            },
+            propsForBackgroundLines: {
+              strokeDasharray: '', // Remove dashed background lines
+            },
           }}
           bezier
+          style={{
+            marginVertical: 10,
+            borderRadius: 16,
+          }}
+          withShadow={false}
+          withHorizontalLines={true}
+          withVerticalLines={true}
+          withInnerLines={false}
         />
       </View>
     </View>
@@ -169,9 +206,10 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     flex: 1,
-    height: 250,
+    height: 300,
     borderRadius: 16,
     overflow: 'hidden',
+    marginBottom: 20,
   },
   progressContainer: {
     alignItems: 'center',
