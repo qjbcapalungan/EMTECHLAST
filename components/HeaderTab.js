@@ -1,23 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   Modal,
   StyleSheet,
-  Button,
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import firebase from '../firebaseConfig'; // Adjust the path to your Firebase config
 
 const HeaderTab = ({ onMenuPress }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [email, setEmail] = useState(''); // State to store the user's email
   const navigation = useNavigation();
 
+  useEffect(() => {
+    // Fetch the email of the currently logged-in user
+    const user = firebase.auth().currentUser;
+    if (user) {
+      setEmail(user.email); // Set the email in state
+    }
+  }, []);
+
   const handleLogout = () => {
-    Alert.alert('Logout', 'You have been logged out.');
-    navigation.replace('Login'); // Navigate back to login
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        Alert.alert('Logout', 'You have been logged out.');
+        navigation.replace('Login'); // Navigate back to login
+      })
+      .catch((error) => {
+        console.error('Logout Error:', error);
+        Alert.alert('Error', 'Failed to log out. Please try again.');
+      });
   };
 
   return (
@@ -58,8 +76,7 @@ const HeaderTab = ({ onMenuPress }) => {
 
             <View style={styles.userDetails}>
               <Ionicons name="person-circle-outline" size={80} color="white" />
-              <Text style={styles.userInfo}>Username: user</Text>
-              <Text style={styles.userInfo}>Email: user@example.com</Text>
+              <Text style={styles.userInfo}>Email: {email}</Text>
             </View>
 
             <View style={styles.actionButtons}>
@@ -95,7 +112,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   modalContainer: {
-    flex: 1,
+    flex:1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
