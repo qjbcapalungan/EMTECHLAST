@@ -4,7 +4,6 @@ import { LineChart } from 'react-native-chart-kit';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconB from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
 import firebase from './firebaseConfig'; // Corrected import path
 
 const CircularProgressBar = ({ value, maxValue, unit }) => {
@@ -29,20 +28,18 @@ const CircularProgressBar = ({ value, maxValue, unit }) => {
 
 const Logger1 = () => {
   const screenWidth = Dimensions.get('window').width;
-  const navigation = useNavigation();
 
-  // State to store psi data points - always starts from 0
   const [dataPoints, setDataPoints] = useState([0]);
   const [latestPsi, setLatestPsi] = useState(0);
+  const [flowrate, setFlowrate] = useState(0); // State to store flowrate
 
   useEffect(() => {
-    // Reference to the Firebase Realtime Database location for psi value
-    const reference = firebase.database().ref('/psi');
+    const psiReference = firebase.database().ref('/psi');
+    const flowrateReference = firebase.database().ref('/flowrate');
 
     try {
-      // Fetch data initially and listen for real-time updates
-      reference.on('value', (snapshot) => {
-        console.log('Snapshot data:', snapshot.val()); // Debugging line
+      // Fetching psi data
+      psiReference.on('value', (snapshot) => {
         const data = snapshot.val();
         if (data !== null) {
           const psiValues = Object.values(data);
@@ -57,82 +54,89 @@ const Logger1 = () => {
             }
           }, 1000);
         } else {
-          // If there is no data, just keep it as [0]
           setDataPoints([0]);
           setLatestPsi(0);
+        }
+      });
+
+      // Fetching flowrate data
+      flowrateReference.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data !== null) {
+          const flowrateValues = Object.values(data);
+          let index = 0;
+          const interval = setInterval(() => {
+            if (index < flowrateValues.length) {
+              setFlowrate(flowrateValues[index]);
+              index++;
+            } else {
+              clearInterval(interval);
+            }
+          }, 1000);
+        } else {
+          setFlowrate(0);
         }
       });
     } catch (error) {
       console.error('Error fetching data from Firebase:', error);
     }
 
-    // Cleanup function to detach listener when the component unmounts
-    return () => reference.off('value');
+    return () => {
+      psiReference.off('value');
+      flowrateReference.off('value');
+    };
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.headerAndStatusContainer}>
         <Text style={styles.headerText}>Pressure Monitoring Pump 1 Report</Text>
-        <Text style={[styles.statusText, latestPsi < 7 ? styles.warningText : null]}>
+        <Text
+          style={[
+            styles.statusText,
+            latestPsi < 7 ? styles.warningText : styles.workingText,
+          ]}
+        >
           {latestPsi < 7 ? 'STATUS: WARNING' : 'STATUS: WORKING'}
         </Text>
       </View>
 
       <View style={styles.chartAndProgressContainer}>
-        {/* Circular Progress Bar Section */}
         <View style={styles.circularProgressContainer}>
-          <CircularProgressBar value={latestPsi} maxValue={15} unit="psi" />
+          <CircularProgressBar value={latestPsi} maxValue={17} unit="psi" />
         </View>
-        {/* Data Sent in a Box */}
         <View style={styles.dataSentContainer}>
-          <Text style={styles.dataSentText}>Data Sent: {Math.floor((dataPoints.length / 16) * 100)}%</Text>
+          <Text style={styles.dataSentText}>
+            Data Sent: {Math.min(Math.max(Math.floor((dataPoints.length / 16) * 20), 5), 100)}%
+          </Text>
           <IconB name="transfer" size={30} color="#007AFF" />
         </View>
       </View>
 
       <View style={styles.infoContainer}>
-        {/* Flowrate Handler */}
         <View style={[styles.infoBox, styles.dataSentBox]}>
-          <Text style={styles.infoText}>Flowrate: 120 L/min</Text>
+          <Text style={styles.infoText}>Flowrate: {flowrate} L/min</Text>
           <Icon name="tint" size={30} color="#007AFF" />
         </View>
       </View>
 
-      {/* LineChart without ScrollView */}
       <View style={styles.chartContainer}>
         <LineChart
           data={{
-            labels: dataPoints.map((_, index) => index % 5 === 0 ? `T${index}` : ''), // Adding periodic labels for clarity
+            labels: dataPoints.map((_, index) => (index % 5 === 0 ? `T${index}` : '')),
             datasets: [{ data: dataPoints }],
           }}
-          width={screenWidth - 20} // Made the chart larger
-          height={300} // Increased height
+          width={screenWidth - 20}
+          height={250}
           chartConfig={{
             backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#f8f8f8',
-            backgroundGradientTo: '#f8f8f8',
-            color: (opacity = 1) => `rgba(255, 115, 94, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            backgroundGradientFrom: '#ffffff',
+            backgroundGradientTo: '#ffffff',
+            color: () => '#ff735e',
+            labelColor: () => '#000',
             style: { borderRadius: 16 },
-            propsForDots: {
-              r: '4',
-              strokeWidth: '2',
-              stroke: '#ff735e',
-            },
-            propsForBackgroundLines: {
-              strokeDasharray: '', // Remove dashed background lines
-            },
           }}
           bezier
-          style={{
-            marginVertical: 10,
-            borderRadius: 16,
-          }}
-          withShadow={false}
-          withHorizontalLines={true}
-          withVerticalLines={true}
-          withInnerLines={false}
         />
       </View>
     </View>
@@ -161,26 +165,26 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     backgroundColor: 'transparent',
   },
-  
   statusText: {
-    color: '#000',
     fontWeight: 'bold',
-    fontSize: 35,
+    fontSize: 18,
     textAlign: 'center',
-    marginTop: 20,
-    backgroundColor: '#8AF19F',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#04364A',
-    width: 350,
-    height: 75,
-    
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    width: '100%',
   },
   warningText: {
-    backgroundColor: '#FF0000',
-    color: '#FFFFFF',
+    backgroundColor: '#FF0000', // Red background for WARNING
+    color: '#FFFFFF', // White text for contrast
+    borderColor: '#FF0000',
+  },
+  workingText: {
+    backgroundColor: '#8AF19F', // Green background for WORKING
+    color: '#000000', // Black text for contrast
+    borderColor: '#04364A',
   },
   chartAndProgressContainer: {
     flexDirection: 'row',
@@ -200,28 +204,26 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     width: 150,
-    height: 150,
+    height: 170,
     marginRight: 10,
-    
   },
   chartContainer: {
     flex: 1,
-    height: 300,
+    height: 250,
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 20,
   },
   progressContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   valueText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#007AFF',
   },
   unitText: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#007AFF',
   },
   minValueText: {
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
   dataSentContainer: {
     backgroundColor: '#fff',
     paddingVertical: 59,
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -271,17 +273,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+    width: '60%',
+    height: '100%'
   },
   dataSentBox: {
-    flexDirection: 'row', // Aligning icon and text horizontally
-    paddingVertical: 20, // Increase padding vertically
-    paddingHorizontal: 25, // Increase padding horizontally
-    justifyContent: 'space-between', // Align content to the edges
-    width: '100%', // Make it full width
-    marginTop: 5
-  },
-  warningBackground: {
-    backgroundColor: '#FF0000',
+    flexDirection: 'row',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 5,
   },
   infoText: {
     fontSize: 16,

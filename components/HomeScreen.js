@@ -84,6 +84,13 @@ export default function HomeScreen({ navigation }) {
     );
   };
 
+  // Get current date in the desired format
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#f0f0f0" />
@@ -93,7 +100,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.customHeader}>
         <Text style={styles.title}>Malabon-Valenzuela</Text>
         <Text style={styles.subtitle}>(MVL)</Text>
-        <Text style={styles.updateText}>Last Update: Nov 19 2024</Text>
+        <Text style={styles.updateText}>Last Update: {currentDate}</Text>
       </View>
 
       {/* Content Section */}
@@ -286,7 +293,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
-    width: 60,
+    width: 65,
     alignItems: 'center',
   },
   doneButtonText: {

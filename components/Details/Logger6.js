@@ -65,7 +65,12 @@ const Logger6 = () => {
     <View style={styles.container}>
       <View style={styles.headerAndStatusContainer}>
         <Text style={styles.headerText}>District Meter 2 Report</Text>
-        <Text style={[styles.statusText, currentPsiValue < 7 ? styles.warningText : null]}>
+        <Text
+          style={[
+            styles.statusText,
+            currentPsiValue < 7 ? styles.warningText : styles.workingText,
+          ]}
+        >
           {currentPsiValue < 7 ? 'STATUS: WARNING' : 'STATUS: WORKING'}
         </Text>
       </View>
@@ -137,23 +142,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   statusText: {
-    color: '#000',
     fontWeight: 'bold',
-    fontSize: 35,
+    fontSize: 18,
     textAlign: 'center',
-    marginTop: 20,
-    backgroundColor: '#8AF19F',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#04364A',
-    width: 350,
-    height: 75,
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    width: '100%',
   },
   warningText: {
-    backgroundColor: '#FF0000',
-    color: '#FFFFFF',
+    backgroundColor: '#FF0000', // Red background for WARNING
+    color: '#FFFFFF', // White text for contrast
+    borderColor: '#FF0000',
+  },
+  workingText: {
+    backgroundColor: '#8AF19F', // Green background for WORKING
+    color: '#000000', // Black text for contrast
+    borderColor: '#04364A',
   },
   chartAndProgressContainer: {
     flexDirection: 'row',
@@ -242,17 +249,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
+    width: '60%'
   },
   dataSentBox: {
-    flexDirection: 'row', // Aligning icon and text horizontally
-    paddingVertical: 20, // Increase padding vertically
-    paddingHorizontal: 25, // Increase padding horizontally
-    justifyContent: 'space-between', // Align content to the edges
-    width: '100%', // Make it full width
+    flexDirection: 'row',
+    paddingVertical: 20,
+    paddingHorizontal: 25,
+    justifyContent: 'space-between',
+    width: '100%',
     marginTop: 5,
-  },
-  warningBackground: {
-    backgroundColor: '#FF0000',
   },
   infoText: {
     fontSize: 16,

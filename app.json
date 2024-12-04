@@ -6,7 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "permissions": ["LOCATION"],
+    "permissions": [
+      "LOCATION"
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -16,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.example.midtermsapp",  
+      "package": "com.example.midtermsapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -24,6 +26,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "028bd208-b009-49e5-a2fb-c1e15daea603"
+      }
     }
   }
 }
