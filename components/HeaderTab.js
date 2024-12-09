@@ -40,13 +40,6 @@ const HeaderTab = ({ onMenuPress }) => {
 
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity
-        onPress={onMenuPress}
-        accessibilityLabel="Open menu"
-        accessibilityRole="button"
-      >
-        <MaterialIcons name="menu" size={32} color="white" />
-      </TouchableOpacity>
       <Text style={styles.headerTitle}></Text>
       <TouchableOpacity
         onPress={() => setModalVisible(true)}

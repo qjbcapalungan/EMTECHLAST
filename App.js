@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       await firebase.auth().signInWithEmailAndPassword(email, password);
       console.log('Login successful');
-      navigation.replace('MainApp'); // Navigate to MainApp if credentials match
+      navigation.replace('MainApp'); 
     } catch (error) {
       console.error('Login Error:', error);
       Alert.alert('Login Failed', error.message);
@@ -31,7 +31,7 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
-        source={require('./2E7FEA.png')} // Replace with your background image
+        source={require('./login.png')} 
         style={styles.backgroundImage}
       >
         <View style={styles.overlay}>

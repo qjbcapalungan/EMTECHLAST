@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
   tabBarStyle: {
     height: 65, // Increased the height to make it a little bit larger
     backgroundColor: '#176B87', // Set background color
+    marginBottom: 0,
   },
   tabBarIcon: {
     color: '#ffffff', // Set icon color to white
